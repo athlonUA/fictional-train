@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  strapi:
+    image: strapi/strapi
+    environment:
+      # - NODE_ENV=production
+      - HOST=94.130.178.214
+      - PORT=1337
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=strapi
+      - DATABASE_USERNAME=strapi
+      - DATABASE_PASSWORD=strapi
+    ports:
+      - 1337:1337
+    volumes:
+      - ./app:/srv/app
+    depends_on:
+      - postgres
+    command: 'strapi develop'
+
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: strapi
+      POSTGRES_DB: strapi
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 8060:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - ./pgadmin_storage:/var/lib/pgadmin/storage
+    depends_on:
+      - postgres
+
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0
+    restart: always
+    ports:
+      - 8061:8080
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://strapi:strapi@postgres:5432/strapi
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+    depends_on:
+      - postgres

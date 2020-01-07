@@ -1,0 +1,19 @@
+{
+  "info": {
+    "name": "Lords"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "minLength": 3,
+      "maxLength": 50
+    }
+  },
+  "connection": "default",
+  "collectionName": "lords"
+}
